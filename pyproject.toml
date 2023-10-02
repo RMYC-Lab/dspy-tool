@@ -4,9 +4,16 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "dji_dsp_tools"
-authors = [{name = "cranyozen", email = "cranyozen@foxmail.com"}]
+authors = [
+    {name = "cranyozen", email = "cranyozen@foxmail.com"}
+]
 license = {file = "LICENSE"}
-classifiers = ["Development Status :: 2 - Pre-Alpha", "License :: OSI Approved :: GNU General Public License v2 (GPLv2)"]
+readme = "README.md"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Development Status :: 2 - Pre-Alpha",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)"
+]
 dynamic = ["version", "description"]
 
 [project.urls]
