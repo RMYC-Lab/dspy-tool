@@ -2,11 +2,12 @@
 
 import xml.etree.ElementTree as ET
 
-from dji_dsp_tools.dsp_codec.internal.attribute import Attribute, get_attribute_from_xml_element
-from dji_dsp_tools.dsp_codec.internal.code import Code, get_code_from_xml_element
+from dji_dsp_tools.dsp_codec.internal.attribute import Attribute
+from dji_dsp_tools.dsp_codec.internal.code import Code
 
 
 class Dji:
+    """ Dji class """
     def __init__(self,
                  attribute: Attribute,
                  code: Code):
@@ -20,10 +21,15 @@ class Dji:
         dji.append(self.code.get_xml_element())
         return dji
 
+    @classmethod
+    def from_xml_element(cls, dji_xml_element: ET.Element) -> "Dji":
+        """ Get Dji from XML element """
+        return cls(
+            Attribute.from_xml_element(dji_xml_element.find("attribute")),
+            Code.from_xml_element(dji_xml_element.find("code"))
+        )
 
-def get_dji_from_xml_element(dji_xml_element: ET.Element) -> Dji:
-    """ Get Dji from XML element """
-    return Dji(
-        get_attribute_from_xml_element(dji_xml_element.find("attribute")),
-        get_code_from_xml_element(dji_xml_element.find("code"))
-    )
+    @classmethod
+    def from_xml_string(cls, dji_xml_string: str) -> "Dji":
+        """ Get Dji from XML string """
+        return cls.from_xml_element(ET.fromstring(dji_xml_string))
