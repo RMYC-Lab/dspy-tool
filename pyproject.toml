@@ -7,6 +7,7 @@ name = "dji_dsp_tools"
 authors = [
     {name = "cranyozen", email = "cranyozen@foxmail.com"}
 ]
+requires-python = ">=3.8"
 license = {file = "LICENSE"}
 readme = "README.md"
 classifiers = [
