@@ -210,7 +210,7 @@ class DspFile:
         """
         return self.dji.code.python_code
 
-    def save(self, path: str) -> None:
+    def save(self, path: str, file_name: str = "") -> None:
         """Save the DSP file.
 
         Args:
@@ -222,9 +222,10 @@ class DspFile:
         xml_data = self.dji.get_xml_string()
         dsp_data = self.encode_dsp(xml_data.encode())
 
-        file_name = os.path.join(
-            path, f"{self.file_name}_{self.dji.attribute.guid}.dsp")
-        with open(file_name, "wb") as file:
+        if not file_name:
+            file_name = f"{self.file_name}_{self.dji.attribute.guid}.dsp"
+
+        with open(os.path.join(path, file_name), "wb") as file:
             file.write(dsp_data)
 
     def calc_signature(self) -> str:
