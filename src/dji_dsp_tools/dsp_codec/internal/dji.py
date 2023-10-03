@@ -21,6 +21,10 @@ class Dji:
         dji.append(self.code.get_xml_element())
         return dji
 
+    def get_xml_string(self) -> str:
+        """ Get XML string """
+        return ET.tostring(self.get_xml_element(), encoding="unicode", short_empty_elements=False)
+
     @classmethod
     def from_xml_element(cls, dji_xml_element: ET.Element) -> "Dji":
         """ Get Dji from XML element """

@@ -33,7 +33,7 @@ class Attribute:
     def get_xml_element(self) -> ET.Element:
         """ Get XML element """
         attribute = ET.Element("attribute")
-        ET.SubElement(attribute, "creation_date").text = self.creation_date.strftime("%m/%d/%Y %I:%M:%S %p")
+        ET.SubElement(attribute, "creation_date").text = self.creation_date.strftime("%Y/%m/%d")
         ET.SubElement(attribute, "sign").text = self.sign
         ET.SubElement(attribute, "modify_time").text = self.modify_time.strftime("%m/%d/%Y %I:%M:%S %p")
         ET.SubElement(attribute, "guid").text = self.guid
@@ -49,7 +49,7 @@ class Attribute:
     def from_xml_element(cls, attribute_xml_element: ET.Element) -> "Attribute":
         """ Get Attribute from XML element """
         return cls(
-            datetime.strptime(attribute_xml_element.find("creation_date").text, "%m/%d/%Y %I:%M:%S %p"),
+            datetime.strptime(attribute_xml_element.find("creation_date").text, "%Y/%m/%d"),
             attribute_xml_element.find("sign").text,
             datetime.strptime(attribute_xml_element.find("modify_time").text, "%m/%d/%Y %I:%M:%S %p"),
             attribute_xml_element.find("guid").text,
