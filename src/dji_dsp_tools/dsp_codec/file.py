@@ -31,7 +31,7 @@ class DspFile:
 
     @staticmethod
     def compute_guid() -> str:
-        """Compute the GUID.
+        """Compute the GUID. 生成 GUID
 
         Returns:
             str: the GUID
@@ -39,8 +39,8 @@ class DspFile:
         return str(uuid4()).replace("-", "")
 
     @staticmethod
-    def pkcs7_pad(data: bytes) -> bytes:
-        """PKCS7 padding.
+    def _pkcs7_pad(data: bytes) -> bytes:
+        """PKCS7 padding. PKCS7 填充
 
         Args:
             data (bytes): the data
@@ -52,8 +52,8 @@ class DspFile:
         return data + bytes([padding] * padding)
 
     @staticmethod
-    def pkcs7_unpad(data: bytes) -> bytes:
-        """PKCS7 unpadding.
+    def _pkcs7_unpad(data: bytes) -> bytes:
+        """PKCS7 unpadding. PKCS7 去填充
 
         Args:
             data (bytes): the data
@@ -71,7 +71,7 @@ class DspFile:
 
     @staticmethod
     def decode_dsp(raw_byte: bytes) -> bytes:
-        """Decode the DSP file.
+        """Decode the DSP file. 解码 DSP 文件
 
         Args:
             raw_byte (bytes): the raw data
@@ -82,13 +82,13 @@ class DspFile:
         cipher_text = base64.standard_b64decode(raw_byte)
 
         cipher = AES.new(DSP_KEY, AES.MODE_CBC, DSP_IV)
-        plain_byte = DspFile.pkcs7_unpad(cipher.decrypt(cipher_text))
+        plain_byte = DspFile._pkcs7_unpad(cipher.decrypt(cipher_text))
 
         return plain_byte
 
     @staticmethod
     def encode_dsp(plain_byte: bytes) -> bytes:
-        """Encode the DSP file.
+        """Encode the DSP file. 编码 DSP 文件
 
         Args:
             plain_byte (bytes): the plain data
@@ -96,7 +96,7 @@ class DspFile:
         Returns:
             bytes: the encoded data
         """
-        plain_byte = DspFile.pkcs7_pad(plain_byte)
+        plain_byte = DspFile._pkcs7_pad(plain_byte)
 
         cipher = AES.new(DSP_KEY, AES.MODE_CBC, DSP_IV)
         cipher_text = cipher.encrypt(plain_byte)
@@ -107,7 +107,7 @@ class DspFile:
 
     @classmethod
     def new(cls, creator: str = "Anonymous", title: str = "Untitled", file_name: str = "") -> "DspFile":
-        """Create a new DSP file.
+        """Create a new DSP file. 创建一个新的 DSP 文件
 
         Args:
             creator (str, optional): the creator. Defaults to "Anonymous".
@@ -121,7 +121,7 @@ class DspFile:
 
     @classmethod
     def new_with_python_code(cls, creator: str = "Anonymous", title: str = "Untitled", python_code: str = "", file_name: str = "") -> "DspFile":
-        """Create a new DSP file with Python code.
+        """Create a new DSP file with Python code. 创建一个新的带有 Python 代码的 DSP 文件
 
         Args:
             creator (str, optional): the creator. Defaults to "Anonymous".
@@ -170,7 +170,7 @@ class DspFile:
 
     @classmethod
     def load(cls, path: str) -> "DspFile":
-        """Load a DSP file.
+        """Load a DSP file. 加载一个 DSP 文件
 
         Args:
             path (str): the path of the DSP file.
@@ -195,7 +195,7 @@ class DspFile:
         return cls(dji, file_name)
 
     def set_python_code(self, python_code: str) -> None:
-        """Set the Python code.
+        """Set the Python code. 设置 Python 代码
 
         Args:
             python_code (str): Python code
@@ -203,7 +203,7 @@ class DspFile:
         self.dji.code.python_code = python_code.strip()
 
     def python_code(self) -> str:
-        """Get the Python code.
+        """Get the Python code. 获取 Python 代码
 
         Returns:
             str: Python code
@@ -211,7 +211,7 @@ class DspFile:
         return self.dji.code.python_code
 
     def save(self, path: str, file_name: str = "") -> None:
-        """Save the DSP file.
+        """Save the DSP file. 保存 DSP 文件
 
         Args:
             path (str): the path of the DSP file.
@@ -229,7 +229,7 @@ class DspFile:
             file.write(dsp_data)
 
     def calc_signature(self) -> str:
-        """Calculate the signature.
+        """Calculate the signature. 计算签名
 
         Returns:
             str: the signature
@@ -249,6 +249,6 @@ class DspFile:
         return md5_sum[7:23]
 
     def compute_signature(self) -> None:
-        """Compute the signature.
+        """Compute the signature. 计算签名
         """
         self.dji.attribute.sign = self.calc_signature()
