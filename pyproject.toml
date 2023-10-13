@@ -3,7 +3,7 @@ requires = ["flit_core >=3.2,<4"]
 build-backend = "flit_core.buildapi"
 
 [project]
-name = "dji_dsp_tools"
+name = "dspy_tool"
 authors = [
     {name = "cranyozen", email = "cranyozen@foxmail.com"}
 ]
@@ -11,7 +11,7 @@ requires-python = ">=3.8"
 license = {file = "LICENSE"}
 readme = "README.md"
 dependencies = [
-    "pycryptodome >=3.19",
+    "pycryptodome >= 3.19",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",

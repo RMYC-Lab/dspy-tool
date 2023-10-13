@@ -3,8 +3,8 @@
 from datetime import datetime
 import xml.etree.ElementTree as ET
 
-from dji_dsp_tools.dsp_codec.internal.code_type import CodeType
-from dji_dsp_tools.dsp_codec.internal.fvd import FirmwareVersionDependency
+from dspy_tool.dsp_codec.internal.code_type import CodeType
+from dspy_tool.dsp_codec.internal.fvd import FirmwareVersionDependency
 
 
 class Attribute:

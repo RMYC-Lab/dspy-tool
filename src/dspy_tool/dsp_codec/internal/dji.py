@@ -2,8 +2,8 @@
 
 import xml.etree.ElementTree as ET
 
-from dji_dsp_tools.dsp_codec.internal.attribute import Attribute
-from dji_dsp_tools.dsp_codec.internal.code import Code
+from dspy_tool.dsp_codec.internal.attribute import Attribute
+from dspy_tool.dsp_codec.internal.code import Code
 
 
 class Dji:

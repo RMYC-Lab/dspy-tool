@@ -11,11 +11,11 @@ from datetime import datetime
 from uuid import uuid4
 from Crypto.Cipher import AES
 
-from dji_dsp_tools.dsp_codec.internal.attribute import Attribute
-from dji_dsp_tools.dsp_codec.internal.code import Code
-from dji_dsp_tools.dsp_codec.internal.dji import Dji
-from dji_dsp_tools.dsp_codec.internal.fvd import FirmwareVersionDependency
-from dji_dsp_tools.dsp_codec.internal.code_type import CodeType
+from dspy_tool.dsp_codec.internal.attribute import Attribute
+from dspy_tool.dsp_codec.internal.code import Code
+from dspy_tool.dsp_codec.internal.dji import Dji
+from dspy_tool.dsp_codec.internal.fvd import FirmwareVersionDependency
+from dspy_tool.dsp_codec.internal.code_type import CodeType
 
 # Extracted from DJI's RoboMaster S1 app.
 DSP_KEY = b'TRoP4GWuc30k6WUp'
@@ -230,6 +230,7 @@ class DspFile:
 
     def calc_signature(self) -> str:
         """Calculate the signature. 计算签名
+        不确保计算出来的签名与 DJI 官方的签名一致。现有 Robomaster App 不会检查签名是否正确。
 
         Returns:
             str: the signature
