@@ -22,3 +22,6 @@ dynamic = ["version", "description"]
 
 [project.urls]
 Home = "https://github.com/"
+
+[project.scripts]
+dsp-codec = "dspy_tool.cli.dsp_codec:main"
