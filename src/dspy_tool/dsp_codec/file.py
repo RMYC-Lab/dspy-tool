@@ -136,10 +136,10 @@ class DspFile:
             DspFile: DspFile object
         """
         creator = creator.strip()
-        if creator:
+        if not creator:
             raise ValueError("Creator cannot be empty")
         title = title.strip()
-        if title:
+        if not title:
             raise ValueError("Title cannot be empty")
 
         guid = cls.compute_guid()
@@ -202,13 +202,26 @@ class DspFile:
         """
         self.dji.code.python_code = python_code.strip()
 
-    def python_code(self) -> str:
+    def get_python_code(self) -> str:
         """Get the Python code. 获取 Python 代码
 
         Returns:
             str: Python code
         """
         return self.dji.code.python_code
+
+    def get_dsp_data(self) -> bytes:
+        """Get the DSP data. 获取 DSP 数据
+
+        Returns:
+            bytes: DSP data
+        """
+        self.compute_signature()
+
+        xml_data = self.dji.get_xml_string()
+        dsp_data = self.encode_dsp(xml_data.encode())
+
+        return dsp_data
 
     def save(self, path: str, file_name: str = "") -> None:
         """Save the DSP file. 保存 DSP 文件
@@ -217,11 +230,9 @@ class DspFile:
             path (str): the path of the DSP file.
         """
         self.dji.attribute.modify_time = datetime.now()
-        self.compute_signature()
-
-        xml_data = self.dji.get_xml_string()
-        dsp_data = self.encode_dsp(xml_data.encode())
-
+        
+        dsp_data = self.get_dsp_data()
+        
         if not file_name:
             file_name = f"{self.file_name}_{self.dji.attribute.guid}.dsp"
 

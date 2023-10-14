@@ -50,7 +50,10 @@ class Code:
     @classmethod
     def from_xml_element(cls, code_xml_element: ET.Element) -> "Code":
         """ Get Code from XML element """
-        return cls(
-            code_xml_element.find("python_code").text,
-            code_xml_element.find("scratch_description").text
-        )
+        python_code = code_xml_element.find("python_code").text
+        if not python_code:
+            python_code = ""
+        scratch_description = code_xml_element.find("scratch_description").text
+        if not scratch_description:
+            scratch_description = ""
+        return cls(python_code, scratch_description)
