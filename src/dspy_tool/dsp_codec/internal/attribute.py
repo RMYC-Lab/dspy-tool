@@ -48,6 +48,10 @@ class Attribute:
     @classmethod
     def from_xml_element(cls, attribute_xml_element: ET.Element) -> "Attribute":
         """ Get Attribute from XML element """
+        if attribute_xml_element.find("app_max_version"):
+            _app_max_version = attribute_xml_element.find("app_max_version").text
+        else:
+            _app_max_version = ""
         return cls(
             datetime.strptime(attribute_xml_element.find("creation_date").text, "%Y/%m/%d"),
             attribute_xml_element.find("sign").text,
@@ -58,5 +62,5 @@ class Attribute:
             attribute_xml_element.find("title").text,
             CodeType(attribute_xml_element.find("code_type").text),
             attribute_xml_element.find("app_min_version").text,
-            attribute_xml_element.find("app_max_version").text
+            _app_max_version
         )

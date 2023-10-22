@@ -8,6 +8,7 @@ from dspy_tool.dsp_codec.file import DspFile
 
 __version__ = "0.0.1"
 
+DEBUG = False
 
 def process_py_file(input_file_path: Path, output_file_path: Path, file_name: str, title: str, creator: str, raw: bool, std_out: bool, delete_comments: bool) -> None:
     with open(input_file_path, "r", encoding="utf-8") as file:
@@ -62,19 +63,25 @@ def process_dsp_file(input_file_path: Path, output_file_path: Path, file_name: s
 
 def main():
     parser = argparse.ArgumentParser(description="DSP File Codec Tool")
-    parser.add_argument("--version", "-v", action="version", version="DSP File Codec Tool v" + __version__)
     parser.add_argument("input", type=str, help="the input file path.")
     parser.add_argument("--output", "-o", type=str, help="the output file path. (defaults to current dir)", default=".")
     parser.add_argument("--file-name", "-f", type=str, help="the file name. (defaults to auto generate)")
     parser.add_argument("--std-out", "-s", action="store_true", help="output to the standard output.")
     parser.add_argument("--raw", "-r", action="store_true", help="output raw data. (defaults to False)")
-    parser.add_argument("--delete-comments", "-d", action="store_true", help="try to delete comments for blocks. (defaults to False)")
+    parser.add_argument("--delete-comments", "--dc", action="store_true", help="try to delete comments for blocks. (defaults to False)")
     parser.add_argument("--title", "-t", type=str, help="the title of the file. (defaults to the 'Untitled')", default="Untitled")
     parser.add_argument("--creator", "-c", type=str, help="the creator of the file. (defaults to 'Anonymous')", default="Anonymous")
+    parser.add_argument("--debug", action="store_true", help="enable debug mode.")
+    parser.add_argument("--version", "-v", action="version", version="DSP File Codec Tool v" + __version__)
 
     args = parser.parse_args()
 
-    print(args)
+    if args.debug:
+        global DEBUG
+        DEBUG = True
+
+    if DEBUG:
+        print(args)
     input_file_path = Path(args.input)
     output_file_path = Path(args.output)
     if not input_file_path.exists():
