@@ -3,22 +3,28 @@ import datetime
 import re
 from pathlib import Path
 
-# from dji_dsp_tools import __version__
+from dspy_tool import __version__
 from dspy_tool.dsp_codec.file import DspFile
+from dspy_tool.dsp_codec.internal.dji import Dji
 
-__version__ = "0.0.1"
+# __version__ = "0.0.1"
 
 DEBUG = False
+
+DELETE_COMMENTS_RE = r"\n *?#block.+?\n"
+
 
 def process_py_file(input_file_path: Path, output_file_path: Path, file_name: str, title: str, creator: str, raw: bool, std_out: bool, delete_comments: bool) -> None:
     with open(input_file_path, "r", encoding="utf-8") as file:
         python_code = file.read()
     if not file_name:
-        file_name = f"{input_file_path.stem}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
+        file_name = DspFile.get_file_name(input_file_path.name)
+    if not file_name.endswith(".py"):
+        file_name = f"{file_name}_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"
     dsp_file = DspFile.new_with_python_code(creator, title, python_code, file_name)
     if delete_comments:
         python_code = dsp_file.get_python_code()
-        dsp_file.dji.code.python_code = re.sub(r"\n *?#block.+?\n", "\n", python_code)
+        dsp_file.dji.code.python_code = re.sub(DELETE_COMMENTS_RE, "\n", python_code)
     if raw:
         if std_out:
             print(dsp_file.dji.get_xml_string())
@@ -33,32 +39,44 @@ def process_py_file(input_file_path: Path, output_file_path: Path, file_name: st
         else:
             if not file_name.endswith(".dsp"):
                 file_name += ".dsp"
-            dsp_file.save(output_file_path, file_name)
+            dsp_file.save(str(output_file_path), file_name)
 
 
 def process_dsp_file(input_file_path: Path, output_file_path: Path, file_name: str, title: str, creator: str, raw: bool, std_out: bool, delete_comments: bool) -> None:
-    dsp_file = DspFile.load(input_file_path)
-    if not file_name and dsp_file.file_name:
-        file_name = dsp_file.file_name
-    if delete_comments:
-        python_code = dsp_file.get_python_code()
-        dsp_file.dji.code.python_code = re.sub(r"\n *?#block.+?\n", "\n", python_code)
+    if not file_name:
+        file_name = DspFile.get_file_name(input_file_path.name)
     if raw:
+        with input_file_path.open("rb") as file:
+            dsp_data = DspFile.decode_dsp(file.read()).decode(encoding="utf-8")
+        if delete_comments:
+            dsp_data = re.sub(DELETE_COMMENTS_RE, "\n", dsp_data)
         if std_out:
-            print(dsp_file.dji.get_xml_string())
+            print(dsp_data)
         else:
             if not file_name.endswith(".xml"):
-                file_name += "_raw.xml"
+                file_name += f"_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}_raw.xml"
             with open(output_file_path / file_name, "wb") as file:
-                file.write(dsp_file.dji.get_xml_string().encode())
+                file.write(dsp_data.encode())
     else:
+        # dsp_file = DspFile.load(input_file_path)
+        # if not file_name and dsp_file.file_name:
+        #     file_name = dsp_file.file_name
+        # if delete_comments:
+        #     python_code = dsp_file.get_python_code()
+        #     dsp_file.dji.code.python_code = re.sub(r"\n *?#block.+?\n", "\n", python_code)
+        with input_file_path.open("rb") as file:
+            dsp_data = DspFile.decode_dsp(file.read()).decode(encoding="utf-8")
+        if delete_comments:
+            dsp_data = re.sub(DELETE_COMMENTS_RE, "\n", dsp_data)
         if std_out:
-            print(dsp_file.get_dsp_data().decode(encoding="utf-8"))
+            # print(dsp_file.get_dsp_data().decode(encoding="utf-8"))
+            print(dsp_data)
         else:
+            dsp_file = Dji.from_xml_string(dsp_data)
             if not file_name.endswith(".py"):
                 file_name += f"_{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}.py"
             with open(output_file_path / file_name, "w", encoding="utf-8") as file:
-                file.write(dsp_file.get_python_code())
+                file.write(dsp_file.code.python_code)
 
 
 def main():

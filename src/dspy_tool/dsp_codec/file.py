@@ -6,6 +6,7 @@ DSP 文件格式
 import base64
 import hashlib
 import os
+import re
 
 from datetime import datetime
 from uuid import uuid4
@@ -22,6 +23,8 @@ DSP_KEY = b'TRoP4GWuc30k6WUp'
 DSP_IV = b'bP3crVEO6wABzOc0'
 DSP_MKEY = 'wwxnMmF8'
 
+FILE_NAME_COMPILE = re.compile(r"^(?P<file_name>.*?)([_-](\d{14}|[a-zA-Z0-9]{32}))*((_raw)?\.(dsp|py|xml))?$")
+
 
 class DspFile:
     """ DSP file class. """
@@ -37,6 +40,18 @@ class DspFile:
             str: the GUID
         """
         return str(uuid4()).replace("-", "")
+
+    @staticmethod
+    def get_file_name(original_file_name: str) -> str:
+        """Get the file name. 获取文件名
+
+        Args:
+            original_file_name (str): the original file name
+
+        Returns:
+            str: the file name
+        """
+        return FILE_NAME_COMPILE.match(original_file_name).group("file_name")
 
     @staticmethod
     def _pkcs7_pad(data: bytes) -> bytes:
@@ -184,13 +199,7 @@ class DspFile:
         xml_data = cls.decode_dsp(dsp_data)
         dji = Dji.from_xml_string(xml_data.decode())
 
-        guid = dji.attribute.guid
-        file_name = os.path.splitext(path)[0]
-        file_name = os.path.split(file_name)[1]
-        if file_name.lower().endswith(guid):
-            file_name = file_name[:file_name.lower().rfind(guid)]
-            if file_name.endswith("_"):
-                file_name = file_name[:-1]
+        file_name = cls.get_file_name(os.path.basename(path))
 
         return cls(dji, file_name)
 
@@ -230,9 +239,9 @@ class DspFile:
             path (str): the path of the DSP file.
         """
         self.dji.attribute.modify_time = datetime.now()
-        
+
         dsp_data = self.get_dsp_data()
-        
+
         if not file_name:
             file_name = f"{self.file_name}_{self.dji.attribute.guid}.dsp"
 

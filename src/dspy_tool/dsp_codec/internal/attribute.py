@@ -2,6 +2,7 @@
 
 from datetime import datetime
 import xml.etree.ElementTree as ET
+from uuid import uuid4
 
 from dspy_tool.dsp_codec.internal.code_type import CodeType
 from dspy_tool.dsp_codec.internal.fvd import FirmwareVersionDependency
@@ -48,19 +49,32 @@ class Attribute:
     @classmethod
     def from_xml_element(cls, attribute_xml_element: ET.Element) -> "Attribute":
         """ Get Attribute from XML element """
-        if attribute_xml_element.find("app_max_version"):
-            _app_max_version = attribute_xml_element.find("app_max_version").text
-        else:
-            _app_max_version = ""
+        # return cls(
+        #     datetime.strptime(attribute_xml_element.find("creation_date").text, "%Y/%m/%d"),
+        #     attribute_xml_element.find("sign").text,
+        #     datetime.strptime(attribute_xml_element.find("modify_time").text, "%m/%d/%Y %I:%M:%S %p"),
+        #     attribute_xml_element.find("guid").text,
+        #     attribute_xml_element.find("creator").text,
+        #     FirmwareVersionDependency.from_string(attribute_xml_element.find("firmware_version_dependency").text),
+        #     attribute_xml_element.find("title").text,
+        #     CodeType(attribute_xml_element.find("code_type").text),
+        #     attribute_xml_element.find("app_min_version").text,
+        #     _app_max_version
+        # )
         return cls(
-            datetime.strptime(attribute_xml_element.find("creation_date").text, "%Y/%m/%d"),
-            attribute_xml_element.find("sign").text,
-            datetime.strptime(attribute_xml_element.find("modify_time").text, "%m/%d/%Y %I:%M:%S %p"),
-            attribute_xml_element.find("guid").text,
-            attribute_xml_element.find("creator").text,
-            FirmwareVersionDependency.from_string(attribute_xml_element.find("firmware_version_dependency").text),
-            attribute_xml_element.find("title").text,
-            CodeType(attribute_xml_element.find("code_type").text),
-            attribute_xml_element.find("app_min_version").text,
-            _app_max_version
+            datetime.strptime(attribute_xml_element.findtext("creation_date"), "%Y/%m/%d")\
+                if attribute_xml_element.findtext("creation_date") else datetime.now(),
+            attribute_xml_element.findtext("sign"),
+            datetime.strptime(attribute_xml_element.findtext("modify_time"), "%m/%d/%Y %I:%M:%S %p")\
+                if attribute_xml_element.findtext("modify_time") else datetime.now(),
+            attribute_xml_element.findtext("guid")\
+                if attribute_xml_element.findtext("guid") else str(uuid4()).replace("-", ""),
+            attribute_xml_element.findtext("creator"),
+            FirmwareVersionDependency.from_string(attribute_xml_element.findtext("firmware_version_dependency"))\
+                if attribute_xml_element.findtext("firmware_version_dependency") else FirmwareVersionDependency(),
+            attribute_xml_element.findtext("title"),
+            CodeType(attribute_xml_element.findtext("code_type")\
+                if attribute_xml_element.findtext("code_type") else CodeType.PYTHON_CODE),
+            attribute_xml_element.findtext("app_min_version"),
+            attribute_xml_element.findtext("app_max_version")
         )
