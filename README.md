@@ -19,16 +19,23 @@ pip install -i https://test.pypi.org/simple/ dspy_tool
 
 ### 使用源码安装
 
-1. 克隆本项目或下载 zip 文件
-   克隆命令
+需要您提前安装 Python, Git 以及 [flit](https://pypi.org/project/flit/) 包
+
+1. 克隆本项目或下载 zip 文件 \
+   克隆命令 \
+   Using SSH
    ```bash
-   git clone https://github.com/RMYC-Lab/dji-dsp-tools.git
+   git clone git@github.com:RMYC-Lab/dspy-tool.git
    ```
-2. 进入项目文件夹
+   or using HTTPS
    ```bash
-   cd dji-dsp-tools
+   git clone https://github.com/RMYC-Lab/dspy-tool.git
    ```
-3. 安装
+3. 进入项目文件夹
+   ```bash
+   cd dspy-tool
+   ```
+4. 安装
    ```bash
    flit install
    ```
