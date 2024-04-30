@@ -19,15 +19,18 @@ from dspy_tool.dsp_codec.internal.fvd import FirmwareVersionDependency
 from dspy_tool.dsp_codec.internal.code_type import CodeType
 
 # Extracted from DJI's RoboMaster S1 app.
-DSP_KEY = b'TRoP4GWuc30k6WUp'
-DSP_IV = b'bP3crVEO6wABzOc0'
-DSP_MKEY = 'wwxnMmF8'
+DSP_KEY = b"TRoP4GWuc30k6WUp"
+DSP_IV = b"bP3crVEO6wABzOc0"
+DSP_MKEY = "wwxnMmF8"
 
-FILE_NAME_COMPILE = re.compile(r"^(?P<file_name>.*?)([_-](\d{14}|[a-zA-Z0-9]{32}))*((_raw)?\.(dsp|py|xml))?$")
+FILE_NAME_COMPILE = re.compile(
+    r"^(?P<file_name>.*?)([_-](\d{14}|[a-zA-Z0-9]{32}))*(([_\-\.]raw)?\.(dsp|py|xml))?$"
+)
 
 
 class DspFile:
-    """ DSP file class. """
+    """DSP file class."""
+
     def __init__(self, dji: Dji, file_name: str):
         self.dji = dji
         self.file_name = file_name
@@ -121,7 +124,9 @@ class DspFile:
         return base64_text
 
     @classmethod
-    def new(cls, creator: str = "Anonymous", title: str = "Untitled", file_name: str = "") -> "DspFile":
+    def new(
+        cls, creator: str = "Anonymous", title: str = "Untitled", file_name: str = ""
+    ) -> "DspFile":
         """Create a new DSP file. 创建一个新的 DSP 文件
 
         Args:
@@ -135,7 +140,13 @@ class DspFile:
         return cls.new_with_python_code(creator, title, "", file_name)
 
     @classmethod
-    def new_with_python_code(cls, creator: str = "Anonymous", title: str = "Untitled", python_code: str = "", file_name: str = "") -> "DspFile":
+    def new_with_python_code(
+        cls,
+        creator: str = "Anonymous",
+        title: str = "Untitled",
+        python_code: str = "",
+        file_name: str = "",
+    ) -> "DspFile":
         """Create a new DSP file with Python code. 创建一个新的带有 Python 代码的 DSP 文件
 
         Args:
@@ -170,12 +181,9 @@ class DspFile:
                 title=title,
                 code_type=CodeType.PYTHON_CODE,
                 app_min_version="",
-                app_max_version=""
+                app_max_version="",
             ),
-            code=Code(
-                python_code=python_code,
-                scratch_description=""
-            )
+            code=Code(python_code=python_code, scratch_description=""),
         )
 
         if file_name:
@@ -232,13 +240,16 @@ class DspFile:
 
         return dsp_data
 
-    def save(self, path: str, file_name: str = "") -> None:
+    def save(
+        self, path: str, file_name: str = "", change_modify_time: bool = True
+    ) -> None:
         """Save the DSP file. 保存 DSP 文件
 
         Args:
             path (str): the path of the DSP file.
         """
-        self.dji.attribute.modify_time = datetime.now()
+        if change_modify_time:
+            self.dji.attribute.modify_time = datetime.now()
 
         dsp_data = self.get_dsp_data()
 
@@ -256,20 +267,19 @@ class DspFile:
             str: the signature
         """
         md5_source = (
-            DSP_MKEY +
-            self.dji.attribute.creation_date.strftime("%Y/%m/%d") +
-            self.dji.attribute.title +
-            self.dji.attribute.creator +
-            self.dji.attribute.firmware_version_dependency.value +
-            self.dji.attribute.guid +
-            self.dji.code.python_code +
-            self.dji.code.scratch_description +
-            self.dji.attribute.code_type.name.lower()
+            DSP_MKEY
+            + self.dji.attribute.creation_date.strftime("%Y/%m/%d")
+            + self.dji.attribute.title
+            + self.dji.attribute.creator
+            + self.dji.attribute.firmware_version_dependency.value
+            + self.dji.attribute.guid
+            + self.dji.code.python_code
+            + self.dji.code.scratch_description
+            + self.dji.attribute.code_type.name.lower()
         )
         md5_sum = hashlib.md5(md5_source.encode()).hexdigest()
         return md5_sum[7:23]
 
     def compute_signature(self) -> None:
-        """Compute the signature. 计算签名
-        """
+        """Compute the signature. 计算签名"""
         self.dji.attribute.sign = self.calc_signature()
