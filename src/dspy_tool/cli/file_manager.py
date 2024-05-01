@@ -1,6 +1,8 @@
 import argparse
 from pathlib import Path
 from typing import List
+from sys import argv as sys_argv
+from subprocess import Popen as sp_Popen
 
 from textual.app import App, ComposeResult
 from textual.widgets import Tree, Footer, TextArea
@@ -91,7 +93,6 @@ class FileManagerApp(App):
 
     def compose(self) -> ComposeResult:
         self.file_tree = Tree("DSP Files", id="sidebar")
-        # print(type(tree.root))
         _generate_file_tree(list(_get_dsp_file_list(self.cfg)), self.file_tree.root)
         self.file_tree.root.expand_all()
         self.file_tree.on_event
@@ -101,17 +102,6 @@ class FileManagerApp(App):
         )
         yield self.text_area
         yield Footer()
-
-    def action_change_style(self):
-        next_theme = self.themes.index(self.text_area.theme) + 1
-        if next_theme == len(self.themes):
-            # Out of range
-            next_theme = 0
-        self.text_area.theme = self.themes[next_theme]
-        if next_theme == 3:
-            self.dark = False
-        else:
-            self.dark = True
 
     def on_tree_node_highlighted(self, node: Tree.NodeHighlighted):
         data = node.node.data
@@ -130,17 +120,23 @@ class FileManagerApp(App):
                         + f.read()
                     )
 
+    def action_change_style(self):
+        next_theme = self.themes.index(self.text_area.theme) + 1
+        if next_theme == len(self.themes):
+            # Out of range
+            next_theme = 0
+        self.text_area.theme = self.themes[next_theme]
+        if next_theme == 3:
+            self.dark = False
+        else:
+            self.dark = True
+
     def action_open(self):
         node = self.file_tree.cursor_node
         if node and node.data:
-            import subprocess
-
-            subprocess.Popen(
+            sp_Popen(
                 ["explorer.exe", "/select,", node.data.as_posix().replace("/", "\\")]
             )
-
-    def on_tree_clicked(self, click_event):
-        print(click_event)
 
     def action_copy(self):
         self.text_area.selected_text
@@ -179,6 +175,9 @@ def main():
         action="version",
         version="DSP File Manager Tool v" + __version__,
     )
+
+    if len(sys_argv) == 1:
+        parser.print_help()
 
     args = parser.parse_args()
 
