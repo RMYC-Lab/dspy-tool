@@ -7,7 +7,7 @@ from urllib.parse import unquote
 
 from dspy_tool.dsp_codec.file import DspFile
 
-__version__ = "0.0.4"
+__version__ = "0.1.1"
 
 DEBUG = False
 

@@ -11,7 +11,7 @@ from dspy_tool.cli.dsp_codec import process_dsp_file
 from dspy_tool.cli.utils.config.fm_config import FileManagerConfig
 
 
-__version__ = "0.0.1"
+__version__ = "0.1.1"
 
 
 def list_dirs(cfg: FileManagerConfig):
