@@ -44,6 +44,11 @@ def remove_dir(cfg: FileManagerConfig, dir: Path):
         print(f"{dir} is not in the DSP directories.")
 
 
+def list_files(cfg: FileManagerConfig):
+    for file in _get_dsp_file_list(cfg):
+        print(file)
+
+
 def _get_all_drives():
     for drive in range(ord("A"), ord("Z") + 1):
         drive = chr(drive) + ":\\"
@@ -76,11 +81,16 @@ def _generate_file_tree(file_list: List[Path], root_node: TreeNode):
             root_node.add(file.parent.as_posix()).add_leaf(file.name).data = file
 
 
+def _open_file_in_explorer(file: Path):
+    sp_Popen(["explorer.exe", "/select,", file.as_posix().replace("/", "\\")])
+
+
 class FileManagerApp(App):
     BINDINGS = [
-        ("c", "copy", "Copy the selected text"),
+        ("c", "copy", "Copy the text"),
+        ("d", "decode", "Decode the file"),
         ("s", "change_style", "Change the style"),
-        ("o", "open", "Open file in explorer"),
+        ("o", "open", "Open in explorer"),
         ("q", "quit", "Quit"),
     ]
     CSS_PATH = "css.tcss"
@@ -108,7 +118,7 @@ class FileManagerApp(App):
         if data:
             with data.open(encoding="utf-8") as f:
                 code = process_dsp_file(
-                    data, data.parent, data.stem, "", "", False, True, True, True
+                    data, data.parent, "", "", "", False, True, True, True
                 )
                 if code == "":
                     self.text_area.text = "No python code"
@@ -119,6 +129,18 @@ class FileManagerApp(App):
                         "It seems that we have something wrong when decoded dsp file.\nThis is the origin file:\n"
                         + f.read()
                     )
+
+    def action_copy(self):
+        self.text_area.selected_text
+        pc_copy(self.text_area.selected_text)
+
+    def action_decode(self):
+        node = self.file_tree.cursor_node
+        if node and node.data:
+            process_dsp_file(
+                node.data, node.data.parent, "", "", "", False, False, True, True
+            )
+            _open_file_in_explorer(node.data)
 
     def action_change_style(self):
         next_theme = self.themes.index(self.text_area.theme) + 1
@@ -134,13 +156,7 @@ class FileManagerApp(App):
     def action_open(self):
         node = self.file_tree.cursor_node
         if node and node.data:
-            sp_Popen(
-                ["explorer.exe", "/select,", node.data.as_posix().replace("/", "\\")]
-            )
-
-    def action_copy(self):
-        self.text_area.selected_text
-        pc_copy(self.text_area.selected_text)
+            _open_file_in_explorer(node.data)
 
 
 def main():
@@ -150,12 +166,6 @@ def main():
         "--dsp-dirs",
         action="store_true",
         help="output the dsp directories.",
-    )
-    parser.add_argument(
-        "-l",
-        "--list",
-        action="store_true",
-        help="list the dsp files.",
     )
     parser.add_argument(
         "-a",
@@ -170,6 +180,18 @@ def main():
         help="remove a dsp directory.",
     )
     parser.add_argument(
+        "-l",
+        "--list",
+        action="store_true",
+        help="list the dsp files.",
+    )
+    parser.add_argument(
+        "-t",
+        "--tui",
+        action="store_true",
+        help="open the TUI interface.",
+    )
+    parser.add_argument(
         "-v",
         "--version",
         action="version",
@@ -178,6 +200,7 @@ def main():
 
     if len(sys_argv) == 1:
         parser.print_help()
+        return
 
     args = parser.parse_args()
 
@@ -186,6 +209,8 @@ def main():
     if args.dsp_dirs:
         list_dirs(cfg)
     elif args.list:
+        list_files(cfg)
+    elif args.tui:
         app = FileManagerApp(cfg)
         app.run()
     elif args.add:
