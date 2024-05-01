@@ -11,10 +11,14 @@
 
 ### 使用 PyPI 安装
 
-目前只上传到 TestPyPI 网站  
-运行命令  
+运行命令
 ```bash
-pip install -i https://test.pypi.org/simple/ dspy_tool
+pip install dspy_tool
+```
+
+若您网络条件不佳，建议使用清华源安装
+```bash
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple dspy_tool
 ```
 
 ### 使用源码安装
@@ -67,10 +71,8 @@ dsp-codec input [--output OUTPUT] [--file-name FILE_NAME]
 
 ## 常见问题 Q&A
 
-1. Q: 为什么我安装不了？
-
+1. Q: 为什么我安装不了？  
    A: 请检查你的 Python 版本，本工具需要 Python 3.8 或以上版本
 
-2. Q: 提示找不到文件？
-
+2. Q: 提示找不到文件？  
    A: 请检查你的环境变量是否配置正确，或者使用 `python -m dspy_tool.cli.TOOL_NAME` 命令
