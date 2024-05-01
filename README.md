@@ -59,15 +59,45 @@ dsp-codec input [--output OUTPUT] [--file-name FILE_NAME]
 
 - input: 输入文件路径 (`.dsp` 或 `.py` 格式文件)
 - `-o OUTPUT, --output OUTPUT`: 输出文件夹路径
-- `-f FILE_NAME, --file-name FILE_NAME`: 输出文件名
-- `-s, --std-out`: 输出到标准输出 (打印到屏幕上)
+- `-f FILE_NAME, --file-name FILE_NAME`: 输出文件名  
+  若为空，则会根据输入文件名及当前时间生成输出文件名
+- `-s, --std-out`: 输出到标准输出 (打印到屏幕上)  
+  *Update in verison 0.1.1: 现在会直接 `return` 解码后的字符以方便其他程序使用*
 - `-r, --raw`: 输出为原始数据 (DSP 解码后 xml 文件)
 - `--dc, --delete-comments`: 删除图形化块注释 (以 `#block` 开头)
+- `--pc, --process-chinese`: 处理中文字符  
+  将会将 `.dsp` 文件的 _xx_xx_xx_ 格式的字符转换为中文字符 (实际为 utf-8 编码)
 - `-t TITLE, --title TITLE`: 设置文件标题
 - `-c CREATOR, --creator CREATOR`: 设置文件创建者
 - `--debug`: 输出调试信息
 - `-h, --help`: 显示帮助信息
 - `-v, --version`: 显示版本信息
+
+## DSP 文件管理器 dsp-fm
+
+命令
+`python -m dspy_tool.cli.file_manager` 或者
+```
+dsp-fm [--dsp-dirs] [--add ADD] [--remove REMOVE] [--list] [--tui] [--version] [-h] 
+```
+
+### 参数
+
+- `--dsp-dirs, -d`: 显示 DSP 文件夹列表
+- `--add ADD, -a ADD`: 添加 DSP 文件夹
+- `--remove REMOVE, -r REMOVE`: 移除 DSP 文件夹
+- `--list, -l`: 列出 DSP 文件夹列表
+- `--tui, -t`: 使用 TUI 显示 DSP 文件夹列表  
+  进入后程序将自动扫描 DSP 文件夹列表中的文件并显示  
+  并在右方显示 Python 代码  
+  快捷键:  
+  - `C`: 复制选中的 Python 代码到剪贴板
+  - `D`: 解密选中的文件 且在 Windows 资源管理器中打开
+  - `S`: 切换界面风格
+  - `O`: 在 Windows 资源管理器中打开选中的文件夹
+  - `Q`: 退出 TUI
+- `--version, -v`: 显示版本信息
+- `-h, --help`: 显示帮助信息
 
 ## 常见问题 Q&A
 
