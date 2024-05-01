@@ -5,7 +5,6 @@ from pathlib import Path
 
 from dspy_tool import __version__
 from dspy_tool.dsp_codec.file import DspFile
-from dspy_tool.dsp_codec.internal.dji import Dji
 
 # __version__ = "0.0.1"
 
@@ -97,48 +96,48 @@ def main():
     parser = argparse.ArgumentParser(description="DSP File Codec Tool")
     parser.add_argument("input", type=str, help="the input file path.")
     parser.add_argument(
-        "--output",
         "-o",
+        "--output",
         type=str,
         help="the output file path. (defaults to current dir)",
         default=".",
     )
     parser.add_argument(
-        "--file-name", "-f", type=str, help="the file name. (defaults to auto generate)"
+        "-f", "--file-name", type=str, help="the file name. (defaults to auto generate)"
     )
     parser.add_argument(
-        "--std-out", "-s", action="store_true", help="output to the standard output."
+        "-s", "--std-out", action="store_true", help="output to the standard output."
     )
     parser.add_argument(
-        "--raw",
         "-r",
+        "--raw",
         action="store_true",
         help="output raw xml data. (defaults to False)",
     )
     parser.add_argument(
-        "--delete-comments",
         "--dc",
+        "--delete-comments",
         action="store_true",
         help="try to delete comments for blocks. (defaults to False)",
     )
     parser.add_argument(
-        "--title",
         "-t",
+        "--title",
         type=str,
         help="the title of the file. (defaults to the 'Untitled')",
         default="Untitled",
     )
     parser.add_argument(
-        "--creator",
         "-c",
+        "--creator",
         type=str,
         help="the creator of the file. (defaults to 'Anonymous')",
         default="Anonymous",
     )
     parser.add_argument("--debug", action="store_true", help="enable debug mode.")
     parser.add_argument(
-        "--version",
         "-v",
+        "--version",
         action="version",
         version="DSP File Codec Tool v" + __version__,
     )
