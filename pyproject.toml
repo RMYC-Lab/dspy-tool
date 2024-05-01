@@ -13,6 +13,8 @@ readme = "README.md"
 dependencies = [
     "pycryptodome >= 3.19",
     "pyyaml >= 6.0.1",
+    "textual[syntax] >= 0.58.0",
+    "pyperclip >= 1.8.2"
 ]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -26,3 +28,4 @@ Home = "https://github.com/"
 
 [project.scripts]
 dsp-codec = "dspy_tool.cli.dsp_codec:main"
+dsp-fm = "dspy_tool.cli.file_manager:main"

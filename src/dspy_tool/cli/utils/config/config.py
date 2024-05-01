@@ -21,13 +21,14 @@ class Config:
             data[self.section_name] = self.to_dict()
         else:
             data = {self.section_name: self.to_dict()}
+        print(f"Saving config for {self.section_name} in {config_file}")
         with open(config_file, 'w') as f:
             toml.dump(data, f)
 
     @classmethod
     def load_config(cls, config_file: Path = DEFAULT_CONFIG_FILE):
         if not config_file.exists():
-            # raise ValueError(f"Config file {config_file} does not exist")
+            print(f"Config file {config_file} does not exist. Using default values.")
             return cls()
         with open(config_file, 'r') as f:
             data = toml.load(f)
@@ -35,9 +36,10 @@ class Config:
         section_name = cls.__name__
         if section_name in data:
             values = data[section_name]
+            print(f"Loaded config for {section_name} in {config_file}")
             return cls(**values)
         else:
-            raise ValueError(f"Section '{section_name}' not found in {config_file}")
+            return cls()
 
     def to_dict(self):
         """Return a dictionary representation of the config."""

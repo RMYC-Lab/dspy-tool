@@ -1,0 +1,9 @@
+#sidebar {
+    dock: left;
+    min-width: 20%;
+    max-width: 40%;
+    height: 100%;
+    color: #0f2b41;
+    background: dodgerblue;
+    overflow-x: auto;
+}
